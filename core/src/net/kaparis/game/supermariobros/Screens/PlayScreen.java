@@ -25,6 +25,8 @@ import net.kaparis.game.supermariobros.Sprites.Mario;
 import net.kaparis.game.supermariobros.Scenes.Hud;
 
 import java.util.concurrent.LinkedBlockingQueue;
+import net.kaparis.game.supermariobros.Lua.LuaEngine;
+import net.kaparis.game.supermariobros.Lua.GameAPI;
 
 
 /**
@@ -52,6 +54,9 @@ public class PlayScreen implements Screen{
     private Array<net.kaparis.game.supermariobros.Items.Item> items;
     private LinkedBlockingQueue<ItemDef> itemsToSpawn;
     net.kaparis.game.supermariobros.Tools.Controller controller;
+
+    private LuaEngine luaEngine;
+    private GameAPI gameAPI;
 
     //Box 2D
     private World world;
@@ -95,6 +100,10 @@ public class PlayScreen implements Screen{
 
         //Player Controller
         controller = new net.kaparis.game.supermariobros.Tools.Controller(game.batch);
+
+        // Init Lua Engine
+        gameAPI = new GameAPI(this, player, hud, controller);
+        luaEngine = new LuaEngine(gameAPI);
 
         //Assigns a listener to the world
         world.setContactListener(new net.kaparis.game.supermariobros.Tools.WorldContactListener());
@@ -159,12 +168,16 @@ public class PlayScreen implements Screen{
         return map;
     }
 
+    public float getCamX() { return gameCam.position.x; }
+    public void setCamX(float x) { gameCam.position.x = x; }
+
     public World getWorld(){
         return world;
     }
 
     public void update(float dt) {
         handleInput(dt);
+        if (luaEngine != null) luaEngine.update(dt);
         handleSpawningItems();
 
         //takes 1 step in the physics simulation(60 times per second)

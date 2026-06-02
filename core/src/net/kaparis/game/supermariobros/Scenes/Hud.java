@@ -20,9 +20,9 @@ public class Hud implements Disposable {
     public Stage stage;
     private Viewport viewport;
 
-    private Integer worldTimer;
+    public static Integer worldTimer;
     private float timeCount;
-    private static Integer score;
+    public static Integer score;
 
     Label countdownLabel;
     static Label scoreLabel;
@@ -78,6 +78,10 @@ public class Hud implements Disposable {
     }
 
     @Override
+    public void showMessage(String msg) {
+        scoreLabel.setText(msg);
+    }
+
     public void dispose() {
         stage.dispose();
     }
