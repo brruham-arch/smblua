@@ -77,7 +77,6 @@ public class Hud implements Disposable {
         scoreLabel.setText(String.format("%06d", score));
     }
 
-    @Override
     public void showMessage(String msg) {
         scoreLabel.setText(msg);
     }
