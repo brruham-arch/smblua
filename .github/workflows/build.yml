@@ -46,6 +46,7 @@ jobs:
 
       - name: Sign APK with debug key
         run: |
+          rm -f debug.keystore
           $JAVA_HOME/bin/keytool -genkey -v -keystore debug.keystore \
             -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass android -keypass android \
@@ -68,6 +69,7 @@ jobs:
 
       - name: Sign APK with debug key
         run: |
+          rm -f debug.keystore
           $JAVA_HOME/bin/keytool -genkey -v -keystore debug.keystore \
             -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass android -keypass android \
