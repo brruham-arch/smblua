@@ -27,6 +27,7 @@ import net.kaparis.game.supermariobros.Scenes.Hud;
 import java.util.concurrent.LinkedBlockingQueue;
 import net.kaparis.game.supermariobros.Lua.LuaEngine;
 import net.kaparis.game.supermariobros.Lua.GameAPI;
+import net.kaparis.game.supermariobros.Lua.LuaConsole;
 
 
 /**
@@ -56,6 +57,7 @@ public class PlayScreen implements Screen{
     net.kaparis.game.supermariobros.Tools.Controller controller;
 
     private LuaEngine luaEngine;
+    private LuaConsole luaConsole;
     private GameAPI gameAPI;
 
     //Box 2D
@@ -104,6 +106,8 @@ public class PlayScreen implements Screen{
         // Init Lua Engine
         gameAPI = new GameAPI(this, player, hud, controller);
         luaEngine = new LuaEngine(gameAPI);
+
+        luaConsole = new LuaConsole(game.batch, luaEngine);
 
         //Assigns a listener to the world
         world.setContactListener(new net.kaparis.game.supermariobros.Tools.WorldContactListener());
@@ -281,6 +285,8 @@ public class PlayScreen implements Screen{
 
         game.batch.end();
 
+        luaConsole.draw();
+
         if(gameOver()){
             game.setScreen((new net.kaparis.game.supermariobros.Scenes.GameOverScreen(game)));
             dispose();
@@ -290,6 +296,7 @@ public class PlayScreen implements Screen{
     @Override
     public void resize(int width, int height) {
         gamePort.update(width, height);
+        if(luaConsole != null) luaConsole.resize(width, height);
 
     }
 
@@ -318,6 +325,7 @@ public class PlayScreen implements Screen{
     @Override
     public void dispose() {
         map.dispose();
+        if(luaConsole != null) luaConsole.dispose();
         renderer.dispose();
         world.dispose();
         b2dr.dispose();
