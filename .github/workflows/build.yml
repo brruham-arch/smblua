@@ -41,25 +41,8 @@ jobs:
       - name: Build APK
         run: ./gradlew android:assembleRelease --no-daemon
 
-      - name: Sign APK with debug key
-        run: |
-          $JAVA_HOME/bin/keytool -genkey -v -keystore debug.keystore \
-            -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass android -keypass android \
-            -dname "CN=Android Debug,O=Android,C=US"
-          $JAVA_HOME/bin/jarsigner -verbose \
-            -keystore debug.keystore \
-            -storepass android -keypass android \
-            android/build/outputs/apk/release/android-release-unsigned.apk \
-            androiddebugkey
-          mv android/build/outputs/apk/release/android-release-unsigned.apk \
-             android/build/outputs/apk/release/mario-lua-signed.apk
-
-      - name: Upload Signed APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: mario-lua-signed
-          path: android/build/outputs/apk/release/mario-lua-signed.apk
+      - name: Find APK
+        run: find android/build/outputs/apk -name "*.apk"
 
       - name: Sign APK with debug key
         run: |
@@ -70,13 +53,34 @@ jobs:
           $JAVA_HOME/bin/jarsigner -verbose \
             -keystore debug.keystore \
             -storepass android -keypass android \
-            android/build/outputs/apk/release/android-release-unsigned.apk \
+            $(find android/build/outputs/apk -name '*.apk' | head -1) \
             androiddebugkey
-          mv android/build/outputs/apk/release/android-release-unsigned.apk \
-             android/build/outputs/apk/release/mario-lua-signed.apk
+          cp $(find android/build/outputs/apk -name '*.apk' | head -1) android/build/outputs/apk/mario-lua-signed.apk
 
       - name: Upload Signed APK
         uses: actions/upload-artifact@v4
         with:
           name: mario-lua-signed
-          path: android/build/outputs/apk/release/mario-lua-signed.apk
+          path: android/build/outputs/apk/mario-lua-signed.apk
+
+      - name: Find APK
+        run: find android/build/outputs/apk -name "*.apk"
+
+      - name: Sign APK with debug key
+        run: |
+          $JAVA_HOME/bin/keytool -genkey -v -keystore debug.keystore \
+            -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass android -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US"
+          $JAVA_HOME/bin/jarsigner -verbose \
+            -keystore debug.keystore \
+            -storepass android -keypass android \
+            $(find android/build/outputs/apk -name '*.apk' | head -1) \
+            androiddebugkey
+          cp $(find android/build/outputs/apk -name '*.apk' | head -1) android/build/outputs/apk/mario-lua-signed.apk
+
+      - name: Upload Signed APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: mario-lua-signed
+          path: android/build/outputs/apk/mario-lua-signed.apk
